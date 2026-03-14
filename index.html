@@ -5,17 +5,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
     <title>实时聊天室</title>
     <link rel=icon href=https://s3.bmp.ovh/imgs/2025/09/13/b31e39e1af3bb3c7.webp type=image/x-icon>
-    <!-- 引入 bcryptjs 用于密码哈希 -->
+    <!-- 引入 bcryptjs 和 FingerprintJS -->
     <script src="https://cdn.jsdelivr.net/npm/bcryptjs@2.4.3/dist/bcrypt.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@fingerprintjs/fingerprintjs@3/dist/fp.min.js"></script>
     <style>
-        /* 全局样式 - 现代毛玻璃效果 */
+        /* 样式完全不变，略 (保持原样) */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
             font-family: 'Inter', 'Microsoft YaHei', sans-serif;
         }
-
         body {
             background: linear-gradient(145deg, #f0f4fa 0%, #d9e2ef 100%);
             min-height: 100vh;
@@ -24,7 +24,6 @@
             align-items: center;
             padding: 16px;
         }
-
         .app-container {
             width: 100%;
             max-width: 1400px;
@@ -32,8 +31,6 @@
             flex-direction: column;
             gap: 20px;
         }
-
-        /* 登录卡片 */
         .login-card {
             background: rgba(255, 255, 255, 0.75);
             backdrop-filter: blur(12px);
@@ -46,7 +43,6 @@
             margin: 0 auto;
             border: 1px solid rgba(255,255,255,0.5);
         }
-
         .login-card h2 {
             font-size: 2rem;
             font-weight: 700;
@@ -54,7 +50,6 @@
             margin-bottom: 32px;
             letter-spacing: -0.02em;
         }
-
         .ip-badge {
             background: rgba(37, 99, 235, 0.1);
             padding: 14px 20px;
@@ -65,11 +60,9 @@
             border: 1px solid rgba(37,99,235,0.2);
             backdrop-filter: blur(4px);
         }
-
         .form-group {
             margin-bottom: 28px;
         }
-
         label {
             display: block;
             margin-bottom: 8px;
@@ -78,7 +71,6 @@
             font-size: 0.95rem;
             letter-spacing: 0.3px;
         }
-
         input[type="text"], input[type="password"] {
             width: 100%;
             padding: 16px 22px;
@@ -89,13 +81,11 @@
             transition: all 0.2s;
             outline: none;
         }
-
         input:focus {
             border-color: #2563eb;
             box-shadow: 0 0 0 4px rgba(37,99,235,0.15);
             background: white;
         }
-
         .btn {
             background: #2563eb;
             color: white;
@@ -109,20 +99,17 @@
             transition: all 0.2s;
             box-shadow: 0 8px 20px -8px #2563eb;
         }
-
         .btn:hover {
             background: #1d4ed8;
             transform: translateY(-2px);
             box-shadow: 0 12px 25px -8px #1d4ed8;
         }
-
         .btn:disabled {
             background: #94a3b8;
             box-shadow: none;
             transform: none;
             cursor: not-allowed;
         }
-
         .error {
             color: #dc2626;
             font-size: 0.9rem;
@@ -130,8 +117,6 @@
             padding-left: 16px;
             display: none;
         }
-
-        /* 聊天主区域 (两列布局) */
         .chat-main {
             flex: 3;
             min-width: 300px;
@@ -145,7 +130,6 @@
             flex-direction: column;
             border: 1px solid rgba(255,255,255,0.5);
         }
-
         .online-sidebar {
             flex: 1;
             min-width: 260px;
@@ -160,13 +144,10 @@
             overflow-y: auto;
             border: 1px solid rgba(255,255,255,0.5);
         }
-
         @media (max-width: 768px) {
             .app-container { flex-direction: column; }
             .online-sidebar { width: 100%; max-height: 300px; }
         }
-
-        /* 聊天头部 */
         .chat-header {
             padding: 24px 28px;
             border-bottom: 1px solid rgba(203, 213, 225, 0.4);
@@ -176,7 +157,6 @@
             flex-wrap: wrap;
             gap: 12px;
         }
-
         .user-badge {
             background: rgba(37, 99, 235, 0.15);
             color: #1e40af;
@@ -186,7 +166,6 @@
             font-weight: 600;
             backdrop-filter: blur(4px);
         }
-
         .reset-timer {
             font-size: 0.9rem;
             color: #475569;
@@ -194,8 +173,6 @@
             padding: 6px 16px;
             border-radius: 40px;
         }
-
-        /* 消息列表 */
         .messages {
             padding: 24px 28px;
             height: 400px;
@@ -205,7 +182,6 @@
             margin: 20px 28px;
             border: 1px solid rgba(203, 213, 225, 0.4);
         }
-
         .message {
             margin-bottom: 24px;
             border-bottom: 1px dashed rgba(148, 163, 184, 0.3);
@@ -213,9 +189,7 @@
             position: relative;
             animation: fadeIn 0.3s ease;
         }
-
         @keyframes fadeIn { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
-
         .message-header {
             display: flex;
             justify-content: space-between;
@@ -223,7 +197,6 @@
             color: #64748b;
             margin-bottom: 8px;
         }
-
         .message-author {
             font-weight: 700;
             color: #2563eb;
@@ -231,18 +204,15 @@
             padding: 2px 12px;
             border-radius: 40px;
         }
-
         .message-time {
             color: #94a3b8;
         }
-
         .message-content {
             word-break: break-word;
             color: #0f172a;
             padding-right: 40px;
             line-height: 1.5;
         }
-
         .delete-btn {
             position: absolute;
             right: 0;
@@ -258,23 +228,18 @@
             backdrop-filter: blur(4px);
             transition: all 0.2s;
         }
-
         .message:hover .delete-btn {
             display: block;
         }
-
         .delete-btn:hover {
             background: rgba(239, 68, 68, 0.2);
             color: #b91c1c;
         }
-
-        /* 输入区 */
         .input-area {
             display: flex;
             gap: 12px;
             padding: 0 28px 24px 28px;
         }
-
         .input-area input {
             flex: 1;
             padding: 16px 24px;
@@ -283,20 +248,16 @@
             font-size: 1rem;
             background: rgba(255,255,255,0.8);
         }
-
         .input-area button {
             width: auto;
             padding: 16px 36px;
         }
-
         .char-count {
             padding: 0 28px 20px 28px;
             font-size: 0.9rem;
             color: #64748b;
             text-align: right;
         }
-
-        /* 在线侧边栏 */
         .online-title {
             font-size: 1.3rem;
             font-weight: 700;
@@ -306,18 +267,15 @@
             justify-content: space-between;
             align-items: center;
         }
-
         .online-list {
             list-style: none;
         }
-
         .online-item {
             display: flex;
             align-items: center;
             padding: 12px 0;
             border-bottom: 1px solid rgba(226, 232, 240, 0.6);
         }
-
         .status-dot {
             width: 12px;
             height: 12px;
@@ -325,22 +283,18 @@
             margin-right: 14px;
             transition: all 0.2s;
         }
-
         .online .status-dot {
             background: #22c55e;
             box-shadow: 0 0 0 3px #bbf7d0;
         }
-
         .offline .status-dot {
             background: #94a3b8;
         }
-
         .username {
             flex: 1;
             font-weight: 600;
             color: #334155;
         }
-
         .user-ip {
             font-size: 0.8rem;
             color: #94a3b8;
@@ -348,8 +302,6 @@
             padding: 2px 8px;
             border-radius: 40px;
         }
-
-        /* 警告条 */
         .warning {
             background: rgba(254, 215, 170, 0.8);
             backdrop-filter: blur(8px);
@@ -361,8 +313,6 @@
             display: none;
             border: 1px solid #fed7aa;
         }
-
-        /* 底部信息栏 */
         .footer-bar {
             background: rgba(255, 255, 255, 0.6);
             backdrop-filter: blur(12px);
@@ -376,9 +326,8 @@
             gap: 20px;
             border: 1px solid rgba(255,255,255,0.5);
             margin-top: 10px;
-            user-select: none; /* 不可选中 */
+            user-select: none;
         }
-
         .school-info {
             font-size: 1.1rem;
             font-weight: 600;
@@ -391,7 +340,6 @@
             -webkit-text-fill-color: transparent;
             background-clip: text;
         }
-
         .bulletin-btn {
             background: rgba(37, 99, 235, 0.1);
             border: 1px solid rgba(37,99,235,0.3);
@@ -404,13 +352,11 @@
             font-size: 0.95rem;
             backdrop-filter: blur(4px);
         }
-
         .bulletin-btn:hover {
             background: #2563eb;
             color: white;
             border-color: #2563eb;
         }
-
         .admin-link {
             color: #64748b;
             text-decoration: none;
@@ -420,13 +366,10 @@
             background: rgba(255,255,255,0.5);
             transition: all 0.2s;
         }
-
         .admin-link:hover {
             background: white;
             color: #2563eb;
         }
-
-        /* 公告弹窗 */
         .modal {
             display: none;
             position: fixed;
@@ -437,11 +380,9 @@
             justify-content: center;
             z-index: 1000;
         }
-
         .modal.active {
             display: flex;
         }
-
         .modal-content {
             background: rgba(255,255,255,0.95);
             backdrop-filter: blur(16px);
@@ -452,13 +393,11 @@
             box-shadow: 0 30px 60px rgba(0,0,0,0.3);
             border: 1px solid white;
         }
-
         .modal-content h3 {
             font-size: 1.8rem;
             color: #1e293b;
             margin-bottom: 20px;
         }
-
         .modal-content p {
             font-size: 1.2rem;
             line-height: 1.6;
@@ -468,12 +407,10 @@
             max-height: 60vh;
             overflow-y: auto;
         }
-
         .close-modal {
             margin-top: 24px;
             text-align: right;
         }
-
         .close-modal button {
             background: #2563eb;
             color: white;
@@ -489,7 +426,7 @@
 </head>
 <body>
     <div class="app-container" id="app">
-        <!-- 登录卡片 (默认显示) -->
+        <!-- 登录卡片 -->
         <div id="loginPanel" class="login-card">
             <h2>隆职聊天室</h2>
             <div class="ip-badge" id="ipDisplay">🌐 IP检测中...</div>
@@ -506,10 +443,9 @@
             <div style="margin-top: 20px; text-align: center; color: #475569; font-size:0.9rem;">已有账号直接登录，新账号自动注册</div>
         </div>
 
-        <!-- 聊天主面板 (登录后显示) -->
+        <!-- 聊天主面板 -->
         <div id="chatPanel" style="display: none; width: 100%;">
             <div style="display: flex; flex-wrap: wrap; gap: 20px; width: 100%;">
-                <!-- 左侧聊天区 -->
                 <div class="chat-main">
                     <div class="chat-header">
                         <span class="user-badge" id="userInfo">加载中...</span>
@@ -523,8 +459,6 @@
                     </div>
                     <div class="char-count" id="charCount">0/200</div>
                 </div>
-
-                <!-- 右侧在线状态栏 -->
                 <div class="online-sidebar">
                     <div class="online-title">
                         <span>👥 在线列表</span>
@@ -535,10 +469,8 @@
                     </ul>
                 </div>
             </div>
-
-            <!-- 底部信息栏 (班级信息 + 公告按钮) -->
             <div class="footer-bar">
-                <span></span> <!-- 占位 -->
+                <span></span>
                 <span class="school-info" unselectable="on">聊天室</span>
                 <div style="display: flex; gap: 12px;">
                     <span class="bulletin-btn" id="viewBulletinBtn">📢 查看公告</span>
@@ -561,20 +493,21 @@
     <script>
         (function() {
             // ========== 配置 ==========
-            const SUPABASE_URL = 'https://dthbezrtrvobulfxcprs.supabase.co';   // 替换
-            const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR0aGJlenJ0cnZvYnVsZnhjcHJzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMzODkwNjYsImV4cCI6MjA4ODk2NTA2Nn0.JxmdxhVm7948T2NhNha8au4CNcGVMuw9N78jUNXrs_c';             // 替换
+            const SUPABASE_URL = 'https://dthbezrtrvobulfxcprs.supabase.co';   // 替换为您的URL
+            const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR0aGJlenJ0cnZvYnVsZnhjcHJzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMzODkwNjYsImV4cCI6MjA4ODk2NTA2Nn0.JxmdxhVm7948T2NhNha8au4CNcGVMuw9N78jUNXrs_c'; // 替换
             const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-            const bcrypt = dcodeIO.bcrypt; // 从全局获取 bcrypt
+            const bcrypt = dcodeIO.bcrypt;
 
             // 状态变量
             let currentUser = null;
             let messagesSubscription = null;
             let heartbeatsSubscription = null;
-            let bulletinSubscription = null;   // 订阅公告变化
+            let bulletinSubscription = null;
             let dailyResetTimer = null;
             let heartbeatInterval = null;
             let pingInterval = null;
             let onlineUsers = [];
+            let deviceFingerprint = null; // 存储设备指纹
 
             // DOM 元素
             const loginPanel = document.getElementById('loginPanel');
@@ -598,6 +531,19 @@
             const bulletinContent = document.getElementById('bulletinContent');
             const closeModalBtn = document.getElementById('closeModalBtn');
 
+            // ========== 生成设备指纹（使用 FingerprintJS）==========
+            async function getDeviceFingerprint() {
+                try {
+                    const fp = await FingerprintJS.load();
+                    const result = await fp.get();
+                    return result.visitorId; // 稳定的设备指纹
+                } catch (e) {
+                    console.warn('指纹生成失败，使用备用ID', e);
+                    // 降级：生成一个随机UUID（但无法跨浏览器识别）
+                    return 'fallback-' + crypto.randomUUID();
+                }
+            }
+
             // ========== IP 检测 ==========
             async function detectIP() {
                 const apis = [
@@ -613,7 +559,6 @@
                         if (ip) return ip;
                     } catch (e) { /* 忽略 */ }
                 }
-                // 降级：WebRTC
                 return new Promise((resolve) => {
                     try {
                         const pc = new RTCPeerConnection({ iceServers: [] });
@@ -649,12 +594,12 @@
                 return hasDigit && hasLetter && hasSpecial;
             }
 
-            // ========== 登录/注册处理 ==========
+            // ========== 登录/注册处理（带设备指纹）==========
             enterBtn.addEventListener('click', async () => {
                 const username = usernameInput.value.trim();
                 const password = passwordInput.value.trim();
 
-                // 基本验证
+                // 验证
                 if (!/^[\u4e00-\u9fa5]{1,6}$/.test(username) || username === 'null') {
                     loginError.textContent = '名字必须是1-6位汉字，且不能为"null"';
                     loginError.style.display = 'block';
@@ -668,23 +613,19 @@
 
                 enterBtn.disabled = true;
                 loginError.style.color = '#2563eb';
-                loginError.textContent = '处理中...';
+                loginError.textContent = '生成设备指纹中...';
                 loginError.style.display = 'block';
 
                 try {
+                    // 1. 获取设备指纹（异步）
+                    if (!deviceFingerprint) {
+                        deviceFingerprint = await getDeviceFingerprint();
+                    }
+
                     if (detectedIP === '检测中...') await new Promise(r => setTimeout(r, 500));
                     const currentIP = detectedIP === '检测中...' ? '0.0.0.0' : detectedIP;
 
-                    // 检查IP是否被封禁
-                    const { data: banned, error: banErr } = await supabase
-                        .from('banned_ips')
-                        .select('ip')
-                        .eq('ip', currentIP)
-                        .maybeSingle();
-                    if (banErr) throw banErr;
-                    if (banned) throw new Error('您的IP已被封禁，无法登录');
-
-                    // 查询用户是否存在
+                    // 2. 查询用户是否存在
                     const { data: existingUser, error: userErr } = await supabase
                         .from('users')
                         .select('*')
@@ -698,28 +639,52 @@
                         const match = await bcrypt.compare(password, existingUser.password_hash);
                         if (!match) throw new Error('密码错误');
 
-                        // 更新最后登录时间和IP
+                        // 更新信息（包含指纹）
                         const { error: updateErr } = await supabase
                             .from('users')
-                            .update({ last_login: new Date().toISOString(), ip: currentIP })
+                            .update({ 
+                                last_login: new Date().toISOString(), 
+                                ip: currentIP,
+                                fingerprint: deviceFingerprint   // 关键：记录设备指纹
+                            })
                             .eq('id', existingUser.id);
-                        if (updateErr) throw updateErr;
 
-                        currentUser = { ...existingUser, ip: currentIP };
+                        if (updateErr) {
+                            if (updateErr.message.includes('Device fingerprint is banned')) {
+                                throw new Error('该设备已被封禁，无法登录');
+                            } else if (updateErr.message.includes('IP is banned')) {
+                                throw new Error('该IP已被封禁');
+                            } else {
+                                throw updateErr;
+                            }
+                        }
+                        currentUser = { ...existingUser, ip: currentIP, fingerprint: deviceFingerprint };
                     } else {
-                        // 注册：生成哈希，插入用户
+                        // 注册
                         const saltRounds = 10;
                         const hash = await bcrypt.hash(password, saltRounds);
 
                         const { data: newUser, error: insertErr } = await supabase
                             .from('users')
-                            .insert({ username, password_hash: hash, ip: currentIP })
+                            .insert({ 
+                                username, 
+                                password_hash: hash, 
+                                ip: currentIP,
+                                fingerprint: deviceFingerprint 
+                            })
                             .select()
                             .single();
 
                         if (insertErr) {
-                            if (insertErr.message.includes('IP is banned')) throw new Error('IP被封禁');
-                            throw insertErr;
+                            if (insertErr.message.includes('Device fingerprint is banned')) {
+                                throw new Error('该设备已被封禁，无法注册');
+                            } else if (insertErr.message.includes('IP is banned')) {
+                                throw new Error('该IP已被封禁');
+                            } else if (insertErr.message.includes('duplicate key')) {
+                                throw new Error('用户名已存在，请直接登录');
+                            } else {
+                                throw insertErr;
+                            }
                         }
                         currentUser = newUser;
                     }
@@ -729,13 +694,13 @@
                     chatPanel.style.display = 'block';
                     userInfoDiv.textContent = `👤 ${currentUser.username} (${currentUser.ip})`;
 
-                    // 启动心跳、加载数据、订阅
+                    // 启动各项功能
                     startHeartbeat();
                     loadMessages();
                     loadOnlineUsers();
                     subscribeMessages();
                     subscribeHeartbeats();
-                    subscribeBulletin();   // 订阅公告
+                    subscribeBulletin();
                     startDailyResetTimer();
                     startPing();
 
@@ -861,7 +826,6 @@
                     .subscribe();
             }
 
-            // 发送消息
             sendBtn.addEventListener('click', sendMessage);
             messageInput.addEventListener('input', () => {
                 charCount.textContent = `${messageInput.value.length}/200`;
@@ -884,8 +848,8 @@
                         .from('messages')
                         .insert({ user_id: currentUser.id, content: original });
                     if (error) {
-                        if (error.message.includes('IP is banned')) {
-                            showWarning('您的IP已被封禁，消息未发送');
+                        if (error.message.includes('IP is banned') || error.message.includes('fingerprint is banned')) {
+                            showWarning('您的设备或IP已被封禁，消息未发送');
                         } else {
                             showWarning('发送失败');
                         }
@@ -924,13 +888,12 @@
                         bulletinContent.textContent = payload.new.content;
                     })
                     .subscribe();
-                loadBulletin(); // 初始加载
+                loadBulletin();
             }
 
-            // 打开关闭弹窗
             viewBulletinBtn.addEventListener('click', () => {
                 bulletinModal.classList.add('active');
-                loadBulletin(); // 刷新内容
+                loadBulletin();
             });
             closeModalBtn.addEventListener('click', () => {
                 bulletinModal.classList.remove('active');
@@ -955,7 +918,6 @@
                 dailyResetTimer = setInterval(updateReminder, 60000);
             }
 
-            // ========== 定时 ping ==========
             function startPing() {
                 if (pingInterval) clearInterval(pingInterval);
                 pingInterval = setInterval(async () => {
@@ -963,7 +925,6 @@
                 }, 300000);
             }
 
-            // ========== 工具 ==========
             function escapeHtml(unsafe) {
                 return unsafe.replace(/[&<>"]/g, m => {
                     if (m === '&') return '&amp;';
@@ -974,7 +935,6 @@
                 });
             }
 
-            // 清理
             window.addEventListener('beforeunload', () => {
                 if (messagesSubscription) messagesSubscription.unsubscribe();
                 if (heartbeatsSubscription) heartbeatsSubscription.unsubscribe();
